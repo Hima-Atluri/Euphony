@@ -56,6 +56,7 @@ def player(u):
         else:
             s+=".mp3"  
             l=[]
+            c=0
             l=s.split()
             os.chdir(r'C:\Users\Hima\Documents\Mini project\Songs')
             for root, dir, files in os.walk("C:"):
@@ -66,10 +67,20 @@ def player(u):
                              cursor.execute("INSERT INTO {} (song) VALUES(?)".format(u),(str(f),))
                              conn.commit()
                              print(f)
+                             c+=1
                              mixer.music.load(f)
                              songstatus.set("Playing")
                              mixer.music.play()
                              break
+            if(c==0):
+                if(songstatus.get()=="Playing"):
+                    songstatus.set("Paused")
+                    mixer.music.pause()
+                engine=pyttsx3.init()
+                voices=engine.getProperty('voices')
+                engine.setProperty('voice','voices[1].id')
+                engine.say("Try another song")
+                engine.runAndWait()
                     
     
     def callback(g):
@@ -131,9 +142,14 @@ def player(u):
     pa_photoimage = pa_photo.subsample(1,1)
     pause_btn=Button(root, text = 'Pause', image = pa_photoimage,command=pausesong)
     pause_btn.place(x=500,y=600)
+    v= Image.open("vol.png")
+    vl=v.resize((40,40))
+    v_load = ImageTk.PhotoImage(vl)
+    vol_img = Label(root, image=v_load)
+    vol_img.place(x=840, y=620)
     vol = Scale(root,from_ = 1,to = 0,orient = HORIZONTAL ,bg="paleturquoise2",highlightthickness=0,length=150,width=20,resolution = .1,command=change_vol)
     vol.set(1)
-    vol.place(x=850,y=610)
+    vol.place(x=900,y=610)
 
     #search
     vs=Label(root, text = "Voice Search:", font = ("Times New Roman", 15,'bold'),bg="paleturquoise2")
